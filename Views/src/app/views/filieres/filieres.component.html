@@ -1,0 +1,155 @@
+
+<div class="animated fadeIn">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Filieres
+          </div>
+          <div class="card-body">
+            <p-toolbar styleClass="p-mb-4">
+              <ng-template pTemplate="left">
+                  <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="createNewFiliere()">Ajouter une nouvelle Filiere</button>
+              </ng-template>
+            </p-toolbar>
+          <p-table #dt [value]="filieres" dataKey="_id" [rows]="10" [showCurrentPageReport]="true" [paginator]="true" [rowsPerPageOptions]="[5,10,15,20]"
+          currentPageReportTemplate="Afficher {first} à {last} de  {totalRecords} Filieres" [style]="{'width':'100%','overflow':'auto!important'}"
+          [resizableColumns]="true" columnResizeMode="expand" styleClass="ui-table-customers" [autoLayout]="true"
+          [responsive]="true" selectionMode="single" [(selection)]="selectedFil" (onRowSelect)="onRowSelect($event)"
+          [filterDelay]="0" [globalFilterFields]="['code','libelle']">
+          <ng-template pTemplate="caption">
+            <div class="ui-table-globalfilter-container">
+              <div class="form-group">
+                <div class="input-group">
+                  <input class="form-control" pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')" placeholder="Recherche" >
+                  <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-search"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="nom"> code <p-sortIcon field="code"></p-sortIcon></th>
+                <th pSortableColumn="prenom"> libelle <p-sortIcon field="libelle"></p-sortIcon></th>
+                <th >Mise à jour</th>
+            </tr>
+         </ng-template>
+          <ng-template pTemplate="body" let-filiere>
+            <tr>
+                <td hidden>{{filiere._id}}</td>
+                <td>{{filiere.code}}</td>
+                <td>{{filiere.libelle }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-primary" (click)="editFiliere(filiere);">Modifier</button>
+                </td>
+             </tr>
+          </ng-template>
+        </p-table>
+       </div>
+     </div>
+    <!-- Edit Etudiant Dialog-->
+     <p-dialog [(visible)]="FiliereDialog" [style]="{width: '450px'}" header="Filiere Details" [modal]="true" styleClass="p-fluid">
+      <ng-template pTemplate="content">
+  
+      <form [formGroup]="filiereForm">
+        <div class="content with-padding padding-bottom-0">
+            <div class="row">
+                <div class="col-xl-12">
+  
+                        <div class="col-md-12">
+                            <div class="submit-field form-group" *ngIf="filiereForm.get('code') as filiereFormControl"
+                            [class.invalid]="filiereFormControl.errors &&  (filiereForm.get('code')?.touched|| filiereForm.get('code')?.dirty)">
+                                <h5 class="control-label">code de la filiere</h5>
+                                <input  type="text" class="form-control" formControlName='code' value='filiere.code'>
+                                <span class="help-block" *ngIf="filiereForm.get('nom')?.errors &&
+                                (filiereForm.get('code')?.touched || filiereForm.get('code')?.dirty)">
+                                <span  *ngIf="filiereForm.get('code')?.errors?.['required']">code est nécessaire</span>
+                                <span  *ngIf="filiereForm.get('code')?.errors?.['minlength'] || filiereForm.get('code')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 4, le nombre maximum de caractères disponibles est de 50</span>
+                               </span>
+                            </div>
+                        </div>
+  
+                        <div class="col-md-12">
+                          <div class="submit-field form-group"
+                           [ngClass]="{'has-error': filiereForm.get('libelle')?.errors &&
+                                       (filiereForm.get('libelle')?.touched || filiereForm.get('libelle')?.dirty)}">
+                              <h5 class="control-label">libelle de la filiere</h5>
+                              <input  type="text" class="form-control" formControlName='libelle' value='filiere.libelle'>
+                              <span class="help-block" *ngIf="filiereForm.get('libelle')?.errors &&
+                              (filiereForm.get('libelle')?.touched || filiereForm.get('libelle')?.dirty)">
+                              <span  *ngIf="filiereForm.get('libelle')?.errors?.['required']"> libelle est nécessaire </span>
+                            
+                              <span  *ngIf="filiereForm.get('libelle')?.errors?.['minlength'] || filiereForm.get('libelle')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 8, le nombre maximum de caractères disponibles est de 50</span>
+                         
+                            </span>
+                          </div>
+                      </div>
+                      </div>
+                </div>
+            </div>
+            <br>
+            <div class="buttons">
+                <input type="submit"  (click)="submitEditfiliereForm(filiereForm , filiere._id)" class="button btn-primary  ripple-effect margin-top-10" value="Save"> 
+                &nbsp;
+                <button type="button" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text button btn-danger " (click)="hideDialog()">Exit</button>
+            </div>
+        </form>
+       </ng-template>
+      </p-dialog>
+      <!-- cin c -->
+    <!-- create Etudiant Dialog-->
+     <p-dialog [(visible)]="newFiliereDialog"  [style]="{width: '450px'}" header="Filiere Details" [modal]="true" styleClass="p-fluid">
+      <ng-template pTemplate="content">
+  
+        <form [formGroup]="newFiliereForm">
+          <div class="content with-padding padding-bottom-0">
+              <div class="row">
+                  <div class="col-xl-12">
+    
+                    <div class="col-md-12">
+                        <div class="submit-field form-group" *ngIf="newFiliereForm.get('code') as filiereFormControl"
+                        [class.invalid]="filiereFormControl.errors &&  (newFiliereForm.get('code')?.touched|| newFiliereForm.get('code')?.dirty)">
+                            <h5 class="control-label">code de la filiere</h5>
+                            <input  type="text" class="form-control" formControlName='code'>
+                            <span class="help-block" *ngIf="newFiliereForm.get('nom')?.errors &&
+                            (newFiliereForm.get('code')?.touched || newFiliereForm.get('code')?.dirty)">
+                            <span  *ngIf="newFiliereForm.get('code')?.errors?.['required']">code est nécessaire</span>
+                            <span  *ngIf="newFiliereForm.get('code')?.errors?.['minlength'] || newFiliereForm.get('code')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 4, le nombre maximum de caractères disponibles est de 50</span>
+                           </span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="submit-field form-group"
+                       [ngClass]="{'has-error': newFiliereForm.get('libelle')?.errors &&
+                                   (newFiliereForm.get('libelle')?.touched || newFiliereForm.get('libelle')?.dirty)}">
+                          <h5 class="control-label">libelle de la filiere</h5>
+                          <input  type="text" class="form-control" formControlName='libelle'>
+                          <span class="help-block" *ngIf="newFiliereForm.get('prenom')?.errors &&
+                          (newFiliereForm.get('libelle')?.touched || newFiliereForm.get('libelle')?.dirty)">
+                          <span  *ngIf="newFiliereForm.get('libelle')?.errors?.['required']"> libelle est nécessaire </span>
+                          <span  *ngIf="newFiliereForm.get('libelle')?.errors?.['minlength'] || newFiliereForm.get('libelle')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 8, le nombre maximum de caractères disponibles est de 50</span>
+                     
+                        </span>
+                      </div>
+                  </div>
+                        </div>
+                  </div>
+              </div>
+              <br>
+              <div class="buttons">
+                  <input type="submit"  (click)="submitCreateetudiantForm(newFiliereForm)" class="button btn-primary  ripple-effect margin-top-10" value="Save">
+                  &nbsp;
+                  <button type="button" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text button btn-danger " (click)="hideEtudiantDialog()">Exit</button>
+              </div>
+          </form>
+       </ng-template>
+      </p-dialog>
+  
+    </div>
+   </div>
+  </div>
+  
+  

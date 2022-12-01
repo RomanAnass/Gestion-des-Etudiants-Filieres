@@ -1,0 +1,77 @@
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+    <c-container>
+      <c-row class="justify-content-center">
+        <c-col md="8">
+          <c-card-group>
+            <c-card class="p-4">
+              <c-card-body>
+                <form  #loginForm='ngForm'>
+                  <h1></h1>
+                  <p class="text-muted">Connexion</p>
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend" [class.has-error]='email.invalid && email.touched'
+                    [class.has-success]='email.valid'>
+                      <span class="input-group-text"><i class="icon-lock"></i></span>
+                    </div>
+                    <input type="text" class="form-control"
+                        [(ngModel)]='formData.email'
+                        placeholder="Email"
+                        name='email'
+                        #email='ngModel'
+                        pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+                        required/>
+                   </div>
+                   <div style="margin-bottom: 20px;">
+                       <span class="badge badge-danger" *ngIf='email.touched && email.errors && email.errors?.["required"]'>L'e-mail est requis</span>
+                       <span class="badge badge-danger" *ngIf='email.errors && email.errors?.["pattern"]'>l'e-mail est incorrect</span>
+                   </div>
+
+                  <div class="input-group mb-3">
+                    <div class="input-group-prepend"  [class.has-error]='password.invalid && password.touched'
+                    [class.has-success]='password.valid'>
+                      <span class="input-group-text"><i class="icon-user"></i></span>
+                    </div>
+                    <input type="password" class="form-control input-text" id="password" placeholder="Password"
+                    [(ngModel)]='formData.password'
+                     name='password'
+                     #password='ngModel'
+                     minlength="8"
+                     maxlength="20"
+                     required/>
+                  </div>
+                  <div style="margin-bottom: 20px;" >
+                    <span class="badge badge-danger" *ngIf='password.touched && password.errors && password.errors?.["required"]'>Mot de passe requis</span>
+                    <span class="badge badge-danger" *ngIf='password.errors && password.errors?.["minlength"]'>Le nombre minimum disponible est de 8 </span>
+                </div>
+
+                  <div class="row">
+                    <div class="col-6">
+                      <input   (click)="login(formData)"  type="button" class="btn btn-primary px-4" value="تسجيل دخول">
+                    </div>
+                    <div class="col-6 text-right">
+                      <button type="button" class="btn btn-link px-0">Forgot password?</button>
+                    </div>
+                  </div>
+                </form>
+              </c-card-body>
+            </c-card>
+            <c-card [ngStyle]="{'width.%': 44}" class="text-white bg-primary py-5">
+              <c-card-body class="text-center">
+                <div>
+                  <h2>Sign up</h2>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <button [active]="true" cButton class="mt-3" color="primary" routerLink="/register">
+                    Register Now!
+                  </button>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-card-group>
+        </c-col>
+      </c-row>
+    </c-container>
+  </div>
+  

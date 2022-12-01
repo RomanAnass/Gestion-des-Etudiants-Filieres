@@ -1,0 +1,206 @@
+
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Etudiants
+        </div>
+        <div class="card-body">
+          <p-toolbar styleClass="p-mb-4">
+            <ng-template pTemplate="left">
+                <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="createNewEtudiant()">Ajouter un nouvel étudiant</button>
+            </ng-template>
+          </p-toolbar>
+        <p-table #dt [value]="etudiants" dataKey="_id" [rows]="10" [showCurrentPageReport]="true" [paginator]="true" [rowsPerPageOptions]="[5,10,15,20]"
+        currentPageReportTemplate="Afficher {first} à {last} de  {totalRecords} Etudiants" [style]="{'width':'100%','overflow':'auto!important'}"
+        [resizableColumns]="true" columnResizeMode="expand" styleClass="ui-table-customers" [autoLayout]="true"
+        [responsive]="true" selectionMode="single" [(selection)]="selectedEtd" (onRowSelect)="onRowSelect($event)"
+        [filterDelay]="0" [globalFilterFields]="['nom','prenom','cne']">
+        <ng-template pTemplate="caption">
+          <div class="ui-table-globalfilter-container">
+            <div class="form-group">
+              <div class="input-group">
+                <input class="form-control" pInputText type="text" (input)="dt.filterGlobal(getEventValue($event), 'contains')" placeholder="Recherche" >
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fa fa-search"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+              <th pSortableColumn="nom"> nom <p-sortIcon field="nom"></p-sortIcon></th>
+              <th pSortableColumn="prenom"> prenom <p-sortIcon field="prenom"></p-sortIcon></th>
+              <th pSortableColumn="cne"> cne <p-sortIcon field="cne"></p-sortIcon></th>
+              <th pSortableColumn="filiere">filiere<p-sortIcon field="city"></p-sortIcon></th> 
+              <th >Mise à jour</th>
+          </tr>
+       </ng-template>
+        <ng-template pTemplate="body" let-etudiant>
+          <tr>
+              <td hidden>{{etudiant._id}}</td>
+              <td>{{etudiant.nom}}</td>
+              <td>{{etudiant.prenom }}</td>
+              <td>{{etudiant.cne}}</td>
+              <td>{{etudiant.filiere.libelle}}</td>
+              <td>
+                  <button type="button" class="btn btn-sm btn-primary" (click)="editEtudiant(etudiant);">Modifier</button>
+              </td>
+           </tr>
+        </ng-template>
+      </p-table>
+     </div>
+   </div>
+  <!-- Edit Etudiant Dialog-->
+   <p-dialog [(visible)]="EtudiantDialog" [style]="{width: '450px'}" header="Etudiant Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+    <form [formGroup]="etudiantForm">
+      <div class="content with-padding padding-bottom-0">
+          <div class="row">
+              <div class="col-xl-12">
+
+                      <div class="col-md-12">
+                          <div class="submit-field form-group" *ngIf="etudiantForm.get('nom') as etudiantFormControl"
+                          [class.invalid]="etudiantFormControl.errors &&  (etudiantForm.get('nom')?.touched|| etudiantForm.get('nom')?.dirty)">
+                              <h5 class="control-label">Nom d'etudiant</h5>
+                              <input  type="text" class="form-control" formControlName='nom' value='etudiant.nom'>
+                              <span class="help-block" *ngIf="etudiantForm.get('nom')?.errors &&
+                              (etudiantForm.get('nom')?.touched || etudiantForm.get('nom')?.dirty)">
+                              <span  *ngIf="etudiantForm.get('nom')?.errors?.['required']">Nom est nécessaire</span>
+                              <span  *ngIf="etudiantForm.get('nom')?.errors?.['minlength'] || etudiantForm.get('nom')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 4, le nombre maximum de caractères disponibles est de 50</span>
+                             </span>
+                          </div>
+                      </div>
+
+                      <div class="col-md-12">
+                        <div class="submit-field form-group"
+                         [ngClass]="{'has-error': etudiantForm.get('prenom')?.errors &&
+                                     (etudiantForm.get('prenom')?.touched || etudiantForm.get('prenom')?.dirty)}">
+                            <h5 class="control-label">Prenom</h5>
+                            <input  type="text" class="form-control" formControlName='prenom' value='etudiant.prenom'>
+                            <span class="help-block" *ngIf="etudiantForm.get('prenom')?.errors &&
+                            (etudiantForm.get('prenom')?.touched || etudiantForm.get('prenom')?.dirty)">
+                            <span  *ngIf="etudiantForm.get('prenom')?.errors?.['required']"> Prenom est nécessaire </span>
+                          
+                            <span  *ngIf="etudiantForm.get('prenom')?.errors?.['minlength'] || etudiantForm.get('prenom')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 8, le nombre maximum de caractères disponibles est de 50</span>
+                       
+                          </span>
+                        </div>
+                      </div>
+
+                    <div class="col-md-12">
+                          <div class="submit-field"  *ngIf="etudiantForm.get('cne') as etudiantFormControl"
+                          [class.invalid]="etudiantFormControl?.errors && (etudiantFormControl.touched || etudiantFormControl.dirty)">
+                              <h5 class="control-label">cne</h5>
+                              <input type="text" formControlName='cne'  class="form-control" value='etudiant.cne'>
+                              <span  *ngIf="etudiantForm.get('cne') as userFormControl"
+                              [class.help-block]="etudiantFormControl?.errors && (etudiantFormControl.touched || etudiantFormControl.dirty)">
+                              <span  *ngIf="etudiantForm.get('cne')?.errors?.['required']">Le numero national est nécessaire</span>
+                             
+                              <span  *ngIf="etudiantForm.get('cne')?.errors?.['minlength'] || etudiantForm.get('cne')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 8, le nombre maximum de caractères disponibles est de 50</span>
+                             
+                            </span>
+                          </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <h5 class="control-label" > Filieres </h5>
+                      <select  class="form-control" data-size="7"  formControlName="filiere_id"  title="filiere" >
+                          <option *ngFor="let filiere of filieres" [ngValue]="filiere._id">{{ filiere.libelle}}</option>
+                      </select>
+                    </div>
+
+                    </div>
+              </div>
+          </div>
+          <br>
+          <div class="buttons">
+              <input type="submit"  (click)="submitEditetudiantForm(etudiantForm , etudiant._id)" class="button btn-primary  ripple-effect margin-top-10" value="Save"> 
+              &nbsp;
+              <button type="button" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text button btn-danger " (click)="hideDialog()">Exit</button>
+          </div>
+      </form>
+     </ng-template>
+    </p-dialog>
+    <!-- cin c -->
+  <!-- create Etudiant Dialog-->
+   <p-dialog [(visible)]="newEtudiantDialog"  [style]="{width: '450px'}" header="Etudiant Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+      <form [formGroup]="newEtudiantForm">
+        <div class="content with-padding padding-bottom-0">
+            <div class="row">
+                <div class="col-xl-12">
+  
+                        <div class="col-md-12">
+                            <div class="submit-field form-group" *ngIf="newEtudiantForm.get('nom') as etudiantFormControl"
+                            [class.invalid]="etudiantFormControl?.errors && (etudiantFormControl.touched || etudiantFormControl.dirty)">
+                                <h5 class="control-label">Le nom d'etudiant</h5>
+                                <input  type="text" class="form-control" formControlName='nom' >
+                                <span class="help-block" *ngIf="newEtudiantForm.get('nom')?.errors &&
+                                (newEtudiantForm.get('nom')?.touched || newEtudiantForm.get('nom')?.dirty)">
+                                <span  *ngIf="newEtudiantForm.get('nom')?.errors?.['required']">Le nom est nécessaire</span>
+                                
+                                <span  *ngIf="newEtudiantForm.get('nom')?.errors?.['minlength'] || newEtudiantForm.get('nom')?.errors?.['maxlength']">اقل عدد حروف متاح 4 ,اكثر عدد حروف متاح 50  </span>
+                                 
+                              </span>
+                            </div>
+                        </div>
+  
+                        <div class="col-md-12">
+                          <div class="submit-field form-group"
+                           [ngClass]="{'has-error': newEtudiantForm.get('prenom')?.errors &&
+                                       (newEtudiantForm.get('prenom')?.touched || newEtudiantForm.get('prenom')?.dirty)}">
+                              <h5 class="control-label">Le Prenom</h5>
+                              <input  type="text" class="form-control" formControlName='prenom' >
+                              <span class="help-block" *ngIf="newEtudiantForm.get('prenom')?.errors &&
+                              (newEtudiantForm.get('prenom')?.touched || newEtudiantForm.get('prenom')?.dirty)">
+                              <span  *ngIf="newEtudiantForm.get('prenom')?.errors?.['required']">Le prenom est nécessaire</span>
+                              
+                              <span  *ngIf="newEtudiantForm.get('prenom')?.errors?.['minlength'] || etudiantForm.get('prenom')?.errors?.['maxlength']">اقل عدد حروف متاح 8 ,اكثر عدد حروف متاح 50</span>
+                               
+                            </span>
+                          </div>
+                      </div>
+  
+                        <div class="col-md-12">
+                            <div class="submit-field"  *ngIf="newEtudiantForm.get('cne') as etudiantFormControl"
+                            [class.invalid]="etudiantFormControl?.errors && (etudiantFormControl.touched || etudiantFormControl.dirty)">
+                                <h5 class="control-label">cne</h5>
+                                <input type="text" formControlName='cne'  class="form-control">
+                                <span  *ngIf="newEtudiantForm.get('cne') as etudiantFormControl"
+                                [class.help-block]="etudiantFormControl?.errors && (etudiantFormControl.touched || etudiantFormControl.dirty)">
+                                <span  *ngIf="newEtudiantForm.get('cne')?.errors?.['required']">Le numero national est nécessaire</span>
+                               
+                                <span  *ngIf="etudiantForm.get('cne')?.errors?.['minlength'] || etudiantForm.get('cne')?.errors?.['maxlength']">Le nombre minimum de caractères disponibles est de 8, le nombre maximum de caractères disponibles est de 50</span>
+                                
+                              </span>
+                            </div>
+                        </div>
+                  
+                       <div class="col-md-12">
+                         <h5 class="control-label" > Filieres </h5>
+                         <select  class="form-control" data-size="7"  formControlName="filiere_id"  title="filiere" >
+                          <option *ngFor="let filiere of filieres" [ngValue]="filiere._id">{{ filiere.libelle}}</option>
+                         </select>
+                    </div>
+                      </div>
+                </div>
+            </div>
+            <br>
+            <div class="buttons">
+                <input type="submit"  (click)="submitCreateetudiantForm(newEtudiantForm)" class="button btn-primary  ripple-effect margin-top-10" value="Save">
+                &nbsp;
+                <button type="button" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text button btn-danger " (click)="hideEtudiantDialog()">Exit</button>
+            </div>
+        </form>
+     </ng-template>
+    </p-dialog>
+
+  </div>
+ </div>
+</div>
+
