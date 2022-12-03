@@ -1,9 +1,7 @@
 # Gestion des Étudiants et des Filières
 
 ## Intro/Objectif du projet
-Ce projet est réalisé à l'aide du Mean Stack (MongoDB, ExpressJS, AngularJS, NodeJS). Ce projet permet de créer ou de supprimer ou de modifier une filière ou un étudiant.
-
-#### -- Statut du projet : [Non Terminé]
+Ce projet est réalisé à l'aide du Mean Stack (MongoDB, ExpressJS, AngularJS, NodeJS). Il permet de créer/supprimer/modifier une filière ou un étudiant.
 
 ## Comment Démarrer le projet
 
